@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     Button logoutButton;
     TextView welcomeText;
+    Button placeOrderButton;
 
 
 
@@ -32,11 +33,17 @@ public class MainActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logoutButton);
         welcomeText = findViewById(R.id.welcomeText);
 
+        placeOrderButton = findViewById(R.id.placeOrderButton);
+
         logoutButton.setOnClickListener(v -> {
             auth.signOut(); // Logs out user
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear back stack
             startActivity(intent);
+        });
+
+        placeOrderButton.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, OrderActivity.class));
         });
     }
 
