@@ -81,8 +81,14 @@ public class OrderActivity extends AppCompatActivity {
                 ordersRef.child(orderId).setValue(orderData)
                         .addOnSuccessListener(aVoid -> Toast.makeText(this, "Order Placed!", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                startActivity(new Intent(this, MainActivity.class));
+
+
+//              Now remove all the Intents from stack and start a new intent flow.
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 finish();
+
             } else {
                 Toast.makeText(this, "Location not available", Toast.LENGTH_SHORT).show();
             }
