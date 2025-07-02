@@ -39,8 +39,7 @@ public class TrackingActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracking);
 
-        // Replace with actual passed intent data in real app
-        droneId = getIntent().getStringExtra("droneId");  // e.g., "drone_004"
+        droneId = getIntent().getStringExtra("droneId");
         double userLat = getIntent().getDoubleExtra("userLat", 0);
         double userLng = getIntent().getDoubleExtra("userLng", 0);
         userLatLng = new LatLng(userLat, userLng);
@@ -59,31 +58,29 @@ public class TrackingActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
 
-        // Mark user
         mMap.addMarker(new MarkerOptions()
                 .position(userLatLng)
                 .title("You")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
-        // Connect to Firebase with full URL
-        DatabaseReference droneRef = FirebaseDatabase.getInstance("https://vayodelivery-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("drones")
-                .child(droneId);
+        // 👇 FIX: Use full DB URL
+        DatabaseReference droneRef = FirebaseDatabase.getInstance(
+                        "https://vayodelivery-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("drones").child(droneId);
 
+        // 👂 Real-time listener
         droneRef.addValueEventListener(new ValueEventListener() {
-            @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Double lat = snapshot.child("currentlatitude").getValue(Double.class);
                 Double lng = snapshot.child("currentlongitude").getValue(Double.class);
 
-                Log.d("DroneData", "Lat: " + lat + " Lng: " + lng);
-
                 if (lat != null && lng != null) {
                     LatLng droneLatLng = new LatLng(lat, lng);
+
                     updateDroneMarker(droneLatLng);
                     drawRouteToUser(droneLatLng);
+                    zoomToFitBoth(droneLatLng, userLatLng);
 
                     float distance = distanceBetween(userLatLng, droneLatLng);
                     int speed = 6;
@@ -96,14 +93,13 @@ public class TrackingActivity extends AppCompatActivity implements OnMapReadyCal
                         hasNotified = true;
                         showNotification("Drone has arrived!", "Your food is here 🍔");
                     }
-                } else {
-                    Log.e("DroneData", "Coordinates are null");
+
+                    Log.d("DronePosition", "Lat: " + lat + ", Lng: " + lng);
                 }
             }
 
-            @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
+                Toast.makeText(TrackingActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -122,7 +118,6 @@ public class TrackingActivity extends AppCompatActivity implements OnMapReadyCal
             animateMarkerMovement(droneMarker, lastDroneLatLng, newPos);
         }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newPos, 15));
         lastDroneLatLng = newPos;
     }
 
@@ -150,6 +145,13 @@ public class TrackingActivity extends AppCompatActivity implements OnMapReadyCal
                 .width(6)
                 .color(Color.BLUE)
                 .geodesic(true));
+    }
+
+    private void zoomToFitBoth(LatLng drone, LatLng user) {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(drone);
+        builder.include(user);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 120));
     }
 
     private float distanceBetween(LatLng a, LatLng b) {
