@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "892111448045",
+    "project_id": "vayodelivery",
+    "storage_bucket": "vayodelivery.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892111448045:android:01fb2814477549f2b9e9e4",
+        "android_client_info": {
+          "package_name": "com.vayonics"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7wrmpiVqCKVJ_P2GSsqoJcOGXyylsCh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
