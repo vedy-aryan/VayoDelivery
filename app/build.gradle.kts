@@ -49,5 +49,6 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.play.services.location)
 
+    implementation(libs.play.services.maps) // ✅ MAPS
 
 }

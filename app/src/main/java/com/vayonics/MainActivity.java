@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Button logoutButton;
     TextView welcomeText;
     Button placeOrderButton;
+    Button trackOrdersButton;
 
 
 
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
         placeOrderButton = findViewById(R.id.placeOrderButton);
 
+        trackOrdersButton = findViewById(R.id.trackOrdersButton);
+
+
         logoutButton.setOnClickListener(v -> {
             auth.signOut(); // Logs out user
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -45,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
         placeOrderButton.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, OrderActivity.class));
         });
+
+        trackOrdersButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, UserOrdersActivity.class));
+        });
+
     }
 
 
